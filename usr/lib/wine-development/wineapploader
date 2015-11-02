@@ -1,0 +1,32 @@
+#!/bin/sh
+#
+# Wrapper script to start a Winelib application once it is installed
+#
+# Copyright (C) 2002 Alexandre Julliard
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+#
+
+# determine the app Winelib library name
+app=$(basename "$0" .exe)
+name=$(echo $app | cut -d- -f1)
+suffix=$(echo $app | sed s/$name//)
+appname=$name.exe
+
+# first try explicit WINELOADER
+if [ -x "$WINELOADER" ]; then exec "$WINELOADER" "$appname" "$@"; fi
+
+# finally look in PATH
+exec wine$suffix "$appname" "$@"
